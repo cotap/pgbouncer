@@ -1,3 +1,8 @@
+#!/usr/bin/env rake
+require 'foodcritic'
+require 'rubocop/rake_task'
+require 'rspec'
+require 'rspec/core/rake_task'
 require 'rubygems'
 require 'bundler'
 Bundler.setup
@@ -18,7 +23,7 @@ task :foodcritic do
   puts "...complete"
 end
 
-task :default => ['spec', 'foodcritic']
+task :default => [ :foodcritic, :spec, :rubocop]
 
 desc "Runs spec tests"
 
@@ -26,6 +31,22 @@ task :spec do
   puts 'Running rspec...'
   puts `rspec spec/`
   puts '...complete'
+end
+
+desc 'Run RuboCop on the lib directory'
+Rubocop::RakeTask.new(:rubocop) do |task|
+  # don't abort rake on failure
+  chef_repo_path = File.expand_path(ENV['CHEF_REPO_PATH'] || '../chef-repo')
+  task.options << "--config=#{chef_repo_path}/.rubocop.yml"
+  task.fail_on_error = true
+end
+
+desc 'Run RuboCop on the lib directory'
+Rubocop::RakeTask.new(:rubocop) do |task|
+  # don't abort rake on failure
+  chef_repo_path = File.expand_path(ENV['CHEF_REPO_PATH'] || '../chef-repo')
+  task.options << "--config=#{chef_repo_path}/.rubocop.yml"
+  task.fail_on_error = true
 end
 
 
@@ -74,7 +95,7 @@ namespace :berks do
     else
        puts "You're g2g"
     end
-     
+
     puts "...done"
   end
 

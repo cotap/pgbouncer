@@ -1,13 +1,12 @@
 require 'chefspec'
 
-{ :be_created => :create }.each do |matcher, action|
+[:be_created, :create].each do |matcher, action|
   RSpec::Matchers.define matcher do
     match do |resource|
-      success = false
       if resource.action.respond_to?(:select)
-        success = resource.action.select { |a| a.to_s == action.to_s }.length > 0
+        resource.action.select { |a| a.to_s == action.to_s }.length > 0
       else
-        success = resource.action.to_s == action.to_s
+        resource.action.to_s == action.to_s
       end
     end
 
@@ -16,3 +15,5 @@ require 'chefspec'
     end
   end
 end
+
+
